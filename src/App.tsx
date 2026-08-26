@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'motion/react';
-import { Radio, Send, User, Lock, CornerDownRight, X, Heart, Save, Trash2, History, ArrowLeft } from 'lucide-react';
+import { Radio, Send, User, Lock, CornerDownRight, X, Heart, Save, Trash2, History, ArrowLeft, Volume2, VolumeX, Play, Pause, Disc, Music } from 'lucide-react';
 const EventCalendar = React.lazy(() => 
   import('./components/EventCalendar').then(module => ({ default: module.EventCalendar }))
 );
@@ -103,12 +103,21 @@ const FIGHTERS = [
   { id: 6, name: '?????', color: '#FFD1DC', icon: '?' },
   { id: 1, name: '涼海 璃 UMIRI', color: '#4C5E6E', icon: '🔵', profile: { name: '涼海 璃(璃帽)', enName: 'SUZUMI RII', birthday: '20050822', zodiac: '獅子座', hobby: '戰鬥陀螺', specialty: '講話速度超快', triggerPoint: '你敢在我打太鼓的時候煩我 我下一個就把你當太鼓打' } },
   { id: 8, name: '遜砲小藍', color: '#EBF4F6', icon: '📢', profile: { name: '遜砲小藍', enName: 'AORI SHOU', birthday: '20260620', zodiac: '雙子座', hobby: '瘋狂廣播', specialty: '長得像麥克風的瘋狂喇叭' } },
+  // 蕷蒔泡沫YOJIUTA 二期生預定
+  { id: 11, name: '四方はつら', color: '#B8AC78', icon: '?', profile: { name: '四方はつら', enName: 'YOMO HATURA' } },
+  { id: 12, name: '?????', color: '#B06565', icon: '?' },
+  { id: 13, name: '?????', color: '#9985A8', icon: '?' },
+  { id: 14, name: '?????', color: '#728E75', icon: '?' },
 ];
 
 const getFighterCode = (id: number | undefined): string => {
   if (!id) return '';
   if (id === 1 || id === 8) return 'F00';
   if (id === 7) return 'F01';
+  if (id === 11) return 'Y01';
+  if (id === 12) return 'Y02';
+  if (id === 13) return 'Y03';
+  if (id === 14) return 'Y04';
   return `F0${id}`;
 };
 
@@ -120,6 +129,10 @@ const getRoleTag = (id: number): string | null => {
     case 4: return '薰衣紫擔當';
     case 5: return '萌檸黃擔當';
     case 6: return '櫻花粉擔當';
+    case 11: return '霧霾黃擔當';
+    case 12: return '霧霾紅擔當';
+    case 13: return '霧霾紫擔當';
+    case 14: return '霧霾綠擔當';
     default: return null;
   }
 };
@@ -421,13 +434,8 @@ const CharacterSelect: React.FC<{
 }> = ({ onHome, onPageChange, onSpecialPage, onTriggerLogin }) => {
   const PRODUCER_FIGHTER = FIGHTERS.find(f => f.id === 1)!;
   const HONORARY_FIGHTER = FIGHTERS.find(f => f.id === 8)!;
-  const INITIAL_MEMBERS = FIGHTERS.filter(f => f.id !== 1 && f.id !== 8);
-  const SECOND_GEN_MEMBERS = [
-    { id: 'yojiuta-yellow', name: '?????', color: '#B8AC78', role: '霧霾黃擔當', icon: '?' },
-    { id: 'yojiuta-red', name: '?????', color: '#B06565', role: '霧霾紅擔當', icon: '?' },
-    { id: 'yojiuta-purple', name: '?????', color: '#9985A8', role: '霧霾紫擔當', icon: '?' },
-    { id: 'yojiuta-green', name: '?????', color: '#728E75', role: '霧霾綠擔當', icon: '?' },
-  ];
+  const INITIAL_MEMBERS = FIGHTERS.filter(f => f.id !== 1 && f.id !== 8 && f.id < 10);
+  const SECOND_GEN_MEMBERS = FIGHTERS.filter(f => f.id >= 11 && f.id <= 14);
   const DISABLED_SLOTS = Array.from({ length: 16 }, (_, i) => ({
     id: 100 + i,
     name: '🔒 LOCK',
@@ -551,9 +559,10 @@ const CharacterSelect: React.FC<{
             {SECOND_GEN_MEMBERS.map((slot) => (
               <motion.div
                 key={slot.id}
+                onClick={() => onSpecialPage?.(slot.id)}
                 whileHover={{ y: -10, scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
-                className="relative aspect-[16/9] rounded-3xl overflow-hidden cursor-default bg-black/80 hover:bg-black/90 border-2 border-white/15 hover:border-white/40 shadow-[0_12px_36px_rgba(0,0,0,0.6)] hover:shadow-[0_0_45px_rgba(255,255,255,0.2)] transition-all text-left"
+                className="relative aspect-[16/9] rounded-3xl overflow-hidden cursor-pointer bg-black/80 hover:bg-black/90 border-2 border-white/15 hover:border-white/40 shadow-[0_12px_36px_rgba(0,0,0,0.6)] hover:shadow-[0_0_45px_rgba(255,255,255,0.2)] transition-all text-left"
               >
                 <div 
                   className="absolute inset-0 flex items-center justify-center text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[11rem] opacity-95 font-black font-pixel drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]"
@@ -562,12 +571,12 @@ const CharacterSelect: React.FC<{
                   {slot.icon}
                 </div>
 
-                {slot.role && (
+                {getRoleTag(slot.id) && (
                   <div 
                     className="absolute top-3 left-3 text-black text-[9px] sm:text-xs md:text-sm font-black px-2 py-1 rounded-lg uppercase font-pixel tracking-widest shadow-md"
                     style={{ backgroundColor: slot.color }}
                   >
-                    {slot.role}
+                    {getRoleTag(slot.id)}
                   </div>
                 )}
 
@@ -824,9 +833,740 @@ const SpecialThanksPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   );
 };
 
+// --- Calligraphy Text Configuration for 2nd Gen Members ---
+const CALLIGRAPHY_TEXT_MAP: Record<number, string> = {
+  11: '四方八面',
+};
+
+// --- Umiri Background Music Controller & Continuous Audio Player ---
+const GOOGLE_DRIVE_UMIRI_BGM_ID = '1RpxoWiaQgc5v6Zf11_YH0JJaQWFVxVMJ';
+const GOOGLE_DRIVE_UMIRI_BGM_URL = `https://docs.google.com/uc?export=download&id=${GOOGLE_DRIVE_UMIRI_BGM_ID}`;
+const GOOGLE_DRIVE_UMIRI_BGM_PREVIEW = `https://drive.google.com/file/d/${GOOGLE_DRIVE_UMIRI_BGM_ID}/preview`;
+
+const UmiriBackgroundMusicPlayer: React.FC = () => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(0.65);
+  const [useIframeFallback, setUseIframeFallback] = useState(false);
+
+  // Initialize and attempt autoplay
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = volume;
+    audio.loop = true;
+
+    // Attempt autoplay immediately
+    const startPlay = () => {
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        // Autoplay policy prevented immediate playback; wait for user interaction
+        setIsPlaying(false);
+      });
+    };
+
+    startPlay();
+
+    // Trigger on first user interaction anywhere on the window if autoplay was restricted
+    const handleFirstInteraction = () => {
+      if (audio.paused) {
+        audio.play().then(() => {
+          setIsPlaying(true);
+        }).catch(() => {
+          setUseIframeFallback(true);
+        });
+      }
+    };
+
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    window.addEventListener('scroll', handleFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('scroll', handleFirstInteraction);
+      audio.pause();
+    };
+  }, []);
+
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        setUseIframeFallback(true);
+      });
+    }
+  };
+
+  const toggleMute = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isMuted) {
+      audio.muted = false;
+      setIsMuted(false);
+    } else {
+      audio.muted = true;
+      setIsMuted(true);
+    }
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVol = parseFloat(e.target.value);
+    setVolume(newVol);
+    if (audioRef.current) {
+      audioRef.current.volume = newVol;
+      if (newVol > 0 && isMuted) {
+        audioRef.current.muted = false;
+        setIsMuted(false);
+      }
+    }
+  };
+
+  return (
+    <>
+      {/* HTML5 Audio Stream Element */}
+      <audio
+        ref={audioRef}
+        src={GOOGLE_DRIVE_UMIRI_BGM_URL}
+        loop
+        preload="auto"
+        onError={() => {
+          setUseIframeFallback(true);
+        }}
+        onEnded={() => {
+          if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play().catch(() => {});
+          }
+        }}
+      />
+
+      {/* Embedded Google Drive Preview Fallback */}
+      {useIframeFallback && (
+        <iframe
+          src={GOOGLE_DRIVE_UMIRI_BGM_PREVIEW}
+          allow="autoplay"
+          title="Umiri Background Music"
+          className="hidden"
+        />
+      )}
+
+      {/* Floating Modern Glassmorphic Audio Controller */}
+      <motion.div
+        initial={{ opacity: 0, y: -20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="fixed top-8 right-8 z-[1015] flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/70 backdrop-blur-xl border border-cyan-400/35 text-white shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(34,211,238,0.25)] group"
+      >
+        {/* Animated Spinning Music Disc */}
+        <motion.div
+          animate={isPlaying ? { rotate: 360 } : { rotate: 0 }}
+          transition={isPlaying ? { duration: 4, repeat: Infinity, ease: 'linear' } : { duration: 0.4 }}
+          className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 via-sky-400 to-teal-300 p-[2px] flex items-center justify-center shadow-[0_0_12px_rgba(34,211,238,0.4)] flex-shrink-0 cursor-pointer"
+          onClick={togglePlay}
+          title={isPlaying ? "點擊暫停背景音樂" : "點擊播放背景音樂"}
+        >
+          <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center">
+            <Disc className={`w-4 h-4 ${isPlaying ? 'text-cyan-300' : 'text-slate-400'}`} />
+          </div>
+          <div className="absolute w-1.5 h-1.5 rounded-full bg-cyan-200" />
+        </motion.div>
+
+        {/* Track Info & Equalizer */}
+        <div className="flex flex-col justify-center min-w-[110px] text-left select-none">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-black text-cyan-200 tracking-wider font-pixel">BGM / 涼海璃</span>
+            {/* Visualizer Wave Bars */}
+            <div className="flex items-end gap-[2px] h-3">
+              {[0.6, 1.2, 0.8, 1.4].map((d, idx) => (
+                <motion.div
+                  key={idx}
+                  animate={isPlaying ? { height: ['20%', '100%', '30%'] } : { height: '20%' }}
+                  transition={isPlaying ? { duration: 0.55 + idx * 0.15, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.2 }}
+                  className={`w-[2.5px] rounded-full ${isPlaying ? 'bg-cyan-400 shadow-[0_0_4px_rgba(34,211,238,0.8)]' : 'bg-white/20'}`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="text-[9px] text-white/50 tracking-tight flex items-center gap-1">
+            <span className={`inline-block w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            {isPlaying ? '持續播放中 (Loop)' : '已暫停 (點擊播放)'}
+          </div>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex items-center gap-1.5 pl-1 border-l border-white/15">
+          {/* Play/Pause Button */}
+          <button
+            onClick={togglePlay}
+            className="w-7 h-7 rounded-lg bg-white/10 hover:bg-cyan-400/20 flex items-center justify-center text-white/90 hover:text-cyan-200 transition-colors"
+            title={isPlaying ? "暫停" : "播放"}
+          >
+            {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
+          </button>
+
+          {/* Mute/Unmute Toggle */}
+          <button
+            onClick={toggleMute}
+            className="w-7 h-7 rounded-lg bg-white/10 hover:bg-cyan-400/20 flex items-center justify-center text-white/90 hover:text-cyan-200 transition-colors"
+            title={isMuted ? "解除靜音" : "靜音"}
+          >
+            {isMuted ? <VolumeX className="w-3.5 h-3.5 text-red-400" /> : <Volume2 className="w-3.5 h-3.5" />}
+          </button>
+
+          {/* Volume Slider (expands on hover) */}
+          <div className="w-0 overflow-hidden group-hover:w-16 transition-all duration-300 flex items-center">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={isMuted ? 0 : volume}
+              onChange={handleVolumeChange}
+              className="w-14 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              title={`音量: ${Math.round(volume * 100)}%`}
+            />
+          </div>
+        </div>
+      </motion.div>
+    </>
+  );
+};
+
+// --- Swimming Fish Silhouette Graphic ---
+const SwimmingFishGraphic: React.FC<{ color?: string; opacity?: number }> = ({ 
+  color = '#38bdf8', 
+  opacity = 0.6 
+}) => {
+  const gradId = `fish-grad-${color.replace('#', '')}-${Math.floor(opacity * 100)}`;
+  return (
+    <svg viewBox="0 0 160 56" className="w-full h-full overflow-visible" fill="none">
+      <defs>
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor={color} stopOpacity={opacity * 0.4} />
+          <stop offset="55%" stopColor={color} stopOpacity={opacity * 0.85} />
+          <stop offset="100%" stopColor={color} stopOpacity={opacity} />
+        </linearGradient>
+      </defs>
+      
+      {/* Main Fish Body (Head pointing to right +X, at x=148) */}
+      <path
+        d="M148,28 C128,10 88,6 48,20 C32,10 16,14 0,18 C10,24 16,32 0,38 C16,42 32,46 48,36 C88,50 128,46 148,28 Z"
+        fill={`url(#${gradId})`}
+      />
+      
+      {/* Dorsal Fin */}
+      <path
+        d="M96,15 C85,2 62,6 56,19 C72,13 86,13 96,15 Z"
+        fill={color}
+        fillOpacity={opacity * 0.75}
+      />
+      
+      {/* Pectoral Fin */}
+      <path
+        d="M106,30 C100,44 82,52 74,42 C88,40 98,34 106,30 Z"
+        fill={color}
+        fillOpacity={opacity * 0.7}
+      />
+      
+      {/* Tail Fin Details */}
+      <path
+        d="M32,27 C20,10 6,12 0,18 C8,24 8,32 0,38 C6,44 20,46 32,29 Z"
+        fill={color}
+        fillOpacity={opacity * 0.9}
+      />
+
+      {/* Subtle Luminescent Spine/Highlight */}
+      <path
+        d="M138,28 C112,23 75,24 45,28"
+        stroke="#ffffff"
+        strokeWidth="1.5"
+        strokeOpacity={opacity * 0.35}
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
+// --- Umiri Aquatic Lake Background with Splashes & Swimming Fish Shadows ---
+const UmiriAquaticFishAndSplashEffect: React.FC = () => {
+  // 16 swimming fish with different shades of blue, sizes, speeds, angles, and trajectories
+  // Every fish swims forward in the exact direction of its head (vector = cos(angle), sin(angle))
+  const fishSchool = useMemo(() => [
+    // Right-bound / Up-Right / Down-Right Swimmers (angle between -45deg and 45deg)
+    { id: 1, angle: -18, speed: 18, delay: 0, size: 115, color: '#0284c7', opacity: 0.65, startX: -12, startY: 65, dist: 135, blur: 'blur-[0.5px]' },
+    { id: 2, angle: 14, speed: 24, delay: 3.5, size: 68, color: '#38bdf8', opacity: 0.45, startX: -8, startY: 22, dist: 130, blur: 'blur-[1.5px]' },
+    { id: 3, angle: -32, speed: 15, delay: 7.2, size: 90, color: '#1d4ed8', opacity: 0.7, startX: 10, startY: 95, dist: 125, blur: 'blur-none' },
+    { id: 4, angle: 22, speed: 20, delay: 1.8, size: 105, color: '#0369a1', opacity: 0.55, startX: -10, startY: 10, dist: 135, blur: 'blur-[1px]' },
+    { id: 5, angle: -10, speed: 29, delay: 5.5, size: 52, color: '#0ea5e9', opacity: 0.4, startX: -6, startY: 78, dist: 140, blur: 'blur-[2px]' },
+    { id: 6, angle: -42, speed: 13, delay: 12.0, size: 98, color: '#2563eb', opacity: 0.75, startX: 35, startY: 102, dist: 125, blur: 'blur-none' },
+    { id: 7, angle: -5, speed: 22, delay: 9.0, size: 62, color: '#0891b2', opacity: 0.6, startX: -8, startY: 42, dist: 135, blur: 'blur-[0.5px]' },
+    { id: 8, angle: 8, speed: 27, delay: 14.5, size: 135, color: '#1e3a8a', opacity: 0.45, startX: -15, startY: 55, dist: 145, blur: 'blur-[2.5px]' },
+    
+    // Left-bound / Up-Left / Down-Left Swimmers (angle between 145deg and 215deg)
+    { id: 9, angle: 168, speed: 26, delay: 2.2, size: 120, color: '#0284c7', opacity: 0.5, startX: 108, startY: 38, dist: 140, blur: 'blur-[1px]' },
+    { id: 10, angle: 195, speed: 19, delay: 10.5, size: 72, color: '#60a5fa', opacity: 0.4, startX: 106, startY: 18, dist: 135, blur: 'blur-[1.5px]' },
+    { id: 11, angle: 160, speed: 21, delay: 6.8, size: 82, color: '#1e40af', opacity: 0.65, startX: 108, startY: 72, dist: 135, blur: 'blur-none' },
+    { id: 12, angle: 185, speed: 23, delay: 13.2, size: 88, color: '#0369a1', opacity: 0.5, startX: 106, startY: 58, dist: 135, blur: 'blur-[0.5px]' },
+    { id: 13, angle: 175, speed: 28, delay: 16.0, size: 95, color: '#0284c7', opacity: 0.45, startX: 108, startY: 28, dist: 140, blur: 'blur-[2px]' },
+    { id: 14, angle: -28, speed: 16, delay: 15.5, size: 48, color: '#38bdf8', opacity: 0.7, startX: 2, startY: 88, dist: 130, blur: 'blur-none' },
+    { id: 15, angle: 192, speed: 17, delay: 8.5, size: 58, color: '#93c5fd', opacity: 0.55, startX: 105, startY: 85, dist: 130, blur: 'blur-[1px]' },
+    { id: 16, angle: -15, speed: 32, delay: 4.2, size: 145, color: '#0f766e', opacity: 0.4, startX: -14, startY: 30, dist: 145, blur: 'blur-[3px]' },
+  ], []);
+
+  // Water Splashes (水花效果：多組定點水花噴濺與水花水環)
+  const splashSites = useMemo(() => [
+    { id: 'sp1', x: '18%', y: '16%', duration: 4.8, delay: 0 },
+    { id: 'sp2', x: '82%', y: '24%', duration: 5.5, delay: 2.2 },
+    { id: 'sp3', x: '45%', y: '12%', duration: 6.2, delay: 1.1 },
+    { id: 'sp4', x: '72%', y: '78%', duration: 5.0, delay: 3.4 },
+    { id: 'sp5', x: '26%', y: '82%', duration: 5.8, delay: 4.2 },
+    { id: 'sp6', x: '58%', y: '48%', duration: 6.5, delay: 2.8 },
+  ], []);
+
+  // Ambient Rising Aquatic Bubbles (上升水泡)
+  const bubbles = useMemo(() => Array.from({ length: 22 }, (_, i) => ({
+    id: i,
+    left: `${4 + (i * 4.4) + (Math.sin(i * 9) * 2)}%`,
+    size: 5 + ((i * 7) % 13),
+    duration: 8 + ((i * 3.7) % 9),
+    delay: (i * 0.7) % 7,
+    sway: (i % 2 === 0 ? 1 : -1) * (10 + (i % 15)),
+    opacity: 0.25 + ((i % 5) * 0.1),
+  })), []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* Deep & Light Lake Cyan-Blue-Green Layered Backdrop (深淺不一的湖水藍綠背景) */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse at 50% 20%, #155e75 0%, #0e4453 45%, #092b36 80%),
+            radial-gradient(ellipse at 85% 75%, #0d4b5c 0%, transparent 60%),
+            radial-gradient(ellipse at 15% 85%, #0a3a47 0%, transparent 60%)
+          `,
+        }}
+      />
+
+      {/* Shimmering Lake Water Caustics / Sunlight Reflections (陽光穿透水面水紋光影) */}
+      <div className="absolute inset-0 opacity-30 mix-blend-screen">
+        <motion.div 
+          animate={{
+            opacity: [0.25, 0.45, 0.25],
+            scale: [1, 1.05, 1],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(circle at 50% 30%, rgba(34, 211, 238, 0.28) 0%, rgba(20, 184, 166, 0.15) 45%, transparent 75%)',
+          }}
+        />
+        <motion.div 
+          animate={{
+            opacity: [0.15, 0.35, 0.15],
+            x: [-20, 20, -20],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(circle at 75% 60%, rgba(56, 189, 248, 0.22) 0%, transparent 60%)',
+          }}
+        />
+      </div>
+
+      {/* Water Splashes (水花效果：平滑無閃爍噴濺水珠粒子與水環) */}
+      <div className="absolute inset-0">
+        {splashSites.map((site) => (
+          <div
+            key={site.id}
+            className="absolute pointer-events-none"
+            style={{ left: site.x, top: site.y }}
+          >
+            {/* Center Splash Soft Mist Glow */}
+            <motion.div
+              initial={{ scale: 0.2, opacity: 0 }}
+              animate={{
+                scale: [0.2, 1.4, 1.8, 2.0, 2.0],
+                opacity: [0, 0.45, 0.2, 0, 0],
+              }}
+              transition={{
+                duration: site.duration,
+                repeat: Infinity,
+                times: [0, 0.12, 0.35, 0.6, 1],
+                ease: "easeOut",
+                delay: site.delay,
+              }}
+              className="absolute -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-cyan-300/30 blur-md"
+            />
+
+            {/* Splash Smooth Expanding Rings (漸進擴散淡出，無突兀閃爍) */}
+            {[0, 0.45, 0.9].map((subDelay, subIdx) => (
+              <motion.div
+                key={subIdx}
+                initial={{ scale: 0.1, opacity: 0 }}
+                animate={{
+                  scale: [0.1, 1.2, 2.2 + subIdx * 0.4, 2.8 + subIdx * 0.5, 2.8 + subIdx * 0.5],
+                  opacity: [0, 0.55 - subIdx * 0.1, 0.3 - subIdx * 0.08, 0, 0],
+                }}
+                transition={{
+                  duration: site.duration,
+                  repeat: Infinity,
+                  times: [0, 0.15, 0.5, 0.8, 1],
+                  ease: "easeOut",
+                  delay: site.delay + subDelay,
+                }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border border-cyan-200/50 shadow-[0_0_12px_rgba(34,211,238,0.3)]"
+              />
+            ))}
+
+            {/* Splash Water Spray Droplets (平滑拋物線散開水花) */}
+            {[
+              { angle: -65, dist: 40, size: 5, delay: 0 },
+              { angle: -40, dist: 52, size: 6, delay: 0.04 },
+              { angle: -90, dist: 65, size: 7, delay: 0.02 },
+              { angle: -120, dist: 50, size: 6, delay: 0.05 },
+              { angle: -145, dist: 38, size: 5, delay: 0.03 },
+              { angle: -25, dist: 30, size: 4, delay: 0.06 },
+              { angle: -160, dist: 28, size: 4, delay: 0.07 },
+            ].map((drop, dIdx) => {
+              const rad = (drop.angle * Math.PI) / 180;
+              const targetX = Math.cos(rad) * drop.dist;
+              const targetY = Math.sin(rad) * drop.dist;
+              return (
+                <motion.div
+                  key={dIdx}
+                  initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+                  animate={{
+                    x: [0, targetX * 0.65, targetX, targetX, targetX],
+                    y: [0, targetY - 6, targetY + 12, targetY + 16, targetY + 16],
+                    scale: [0, 1.2, 0.8, 0, 0],
+                    opacity: [0, 0.85, 0.6, 0, 0],
+                  }}
+                  transition={{
+                    duration: site.duration,
+                    repeat: Infinity,
+                    times: [0, 0.12, 0.35, 0.55, 1],
+                    ease: "easeOut",
+                    delay: site.delay + drop.delay,
+                  }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-t from-cyan-200 to-white shadow-[0_0_6px_rgba(255,255,255,0.7)]"
+                  style={{ width: drop.size, height: drop.size }}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      {/* Ambient Rising Bubbles (上升水泡) */}
+      <div className="absolute inset-0">
+        {bubbles.map((b) => (
+          <motion.div
+            key={b.id}
+            initial={{ y: '105vh', x: 0, opacity: 0 }}
+            animate={{
+              y: '-10vh',
+              x: [0, b.sway, -b.sway, 0],
+              opacity: [0, b.opacity, b.opacity, 0],
+            }}
+            transition={{
+              y: {
+                duration: b.duration,
+                repeat: Infinity,
+                ease: "linear",
+                delay: b.delay,
+              },
+              x: {
+                duration: b.duration / 2.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+              opacity: {
+                duration: b.duration,
+                repeat: Infinity,
+                times: [0, 0.1, 0.9, 1],
+                delay: b.delay,
+              }
+            }}
+            className="absolute rounded-full border border-cyan-200/50 bg-cyan-400/10 shadow-[0_0_6px_rgba(34,211,238,0.4)]"
+            style={{
+              left: b.left,
+              width: b.size,
+              height: b.size,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Swimming Blue Fish Shadows (深淺不一的藍色游魚影 - 隨機出現並朝魚頭前方速度不一移動) */}
+      <div className="absolute inset-0">
+        {fishSchool.map((fish) => {
+          // Calculate heading trajectory vector: D * (cos(angle), sin(angle))
+          const rad = (fish.angle * Math.PI) / 180;
+          const targetDeltaX = `${Math.cos(rad) * fish.dist}vw`;
+          const targetDeltaY = `${Math.sin(rad) * fish.dist}vh`;
+
+          return (
+            <motion.div
+              key={fish.id}
+              initial={{
+                x: 0,
+                y: 0,
+                opacity: 0,
+              }}
+              animate={{
+                x: [0, targetDeltaX],
+                y: [0, targetDeltaY],
+                opacity: [0, fish.opacity, fish.opacity, 0],
+              }}
+              transition={{
+                x: {
+                  duration: fish.speed,
+                  repeat: Infinity,
+                  ease: "linear",
+                  delay: fish.delay,
+                },
+                y: {
+                  duration: fish.speed,
+                  repeat: Infinity,
+                  ease: "linear",
+                  delay: fish.delay,
+                },
+                opacity: {
+                  duration: fish.speed,
+                  repeat: Infinity,
+                  times: [0, 0.08, 0.92, 1],
+                  delay: fish.delay,
+                }
+              }}
+              style={{
+                left: `${fish.startX}vw`,
+                top: `${fish.startY}vh`,
+                width: fish.size,
+                height: fish.size * 0.35,
+                transform: `rotate(${fish.angle}deg)`,
+                transformOrigin: 'center center',
+              }}
+              className={`absolute select-none pointer-events-none ${fish.blur} drop-shadow-[0_4px_16px_rgba(0,0,0,0.5)]`}
+            >
+              {/* Fish Body with Swimming Tail-Wiggle Motion */}
+              <motion.div
+                animate={{
+                  rotate: [-3, 3, -3],
+                  y: [-1.5, 1.5, -1.5],
+                }}
+                transition={{
+                  duration: 0.8 + (fish.speed / 20),
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="w-full h-full"
+              >
+                <SwimmingFishGraphic color={fish.color} opacity={fish.opacity} />
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const AncientWaterAndCalligraphyEffect: React.FC<{ fighterId: number; color?: string }> = ({ fighterId, color = '#B8AC78' }) => {
+  const calligraphyText = CALLIGRAPHY_TEXT_MAP[fighterId];
+
+  // Medium amount of floating calligraphy text streams (中量：14組從右向左橫向漂浮)
+  const floatingParticles = useMemo(() => {
+    if (!calligraphyText) return [];
+    
+    return [
+      { id: 1, text: calligraphyText, top: '5%', duration: 20, delay: 0, size: 'text-4xl sm:text-5xl md:text-6xl', opacity: 0.28, swayY: 12 },
+      { id: 2, text: calligraphyText, top: '13%', duration: 26, delay: 6.5, size: 'text-2xl sm:text-3xl md:text-4xl', opacity: 0.18, swayY: -10 },
+      { id: 3, text: calligraphyText, top: '21%', duration: 18, delay: 11.5, size: 'text-5xl sm:text-6xl md:text-7xl', opacity: 0.32, swayY: 15 },
+      { id: 4, text: calligraphyText, top: '29%', duration: 23, delay: 3.2, size: 'text-3xl sm:text-4xl md:text-5xl', opacity: 0.22, swayY: -8 },
+      { id: 5, text: calligraphyText, top: '37%', duration: 19, delay: 14.8, size: 'text-2xl sm:text-3xl', opacity: 0.16, swayY: 10 },
+      { id: 6, text: calligraphyText, top: '45%', duration: 27, delay: 8.4, size: 'text-4xl sm:text-5xl md:text-6xl', opacity: 0.26, swayY: -14 },
+      { id: 7, text: calligraphyText, top: '53%', duration: 17, delay: 2.1, size: 'text-3xl sm:text-4xl md:text-5xl', opacity: 0.3, swayY: 9 },
+      { id: 8, text: calligraphyText, top: '61%', duration: 28, delay: 16.2, size: 'text-5xl sm:text-7xl md:text-8xl', opacity: 0.2, swayY: -12 },
+      { id: 9, text: calligraphyText, top: '69%', duration: 21, delay: 5.3, size: 'text-2xl sm:text-3xl md:text-4xl', opacity: 0.25, swayY: 14 },
+      { id: 10, text: calligraphyText, top: '77%', duration: 24, delay: 12.7, size: 'text-4xl sm:text-5xl md:text-6xl', opacity: 0.35, swayY: -11 },
+      { id: 11, text: calligraphyText, top: '84%', duration: 19, delay: 9.1, size: 'text-3xl sm:text-4xl md:text-5xl', opacity: 0.22, swayY: 8 },
+      { id: 12, text: calligraphyText, top: '91%', duration: 29, delay: 1.5, size: 'text-2xl sm:text-3xl md:text-4xl', opacity: 0.18, swayY: -13 },
+      { id: 13, text: calligraphyText, top: '17%', duration: 22, delay: 15.1, size: 'text-4xl sm:text-5xl', opacity: 0.24, swayY: 10 },
+      { id: 14, text: calligraphyText, top: '57%', duration: 16, delay: 7.2, size: 'text-3xl sm:text-5xl md:text-6xl', opacity: 0.27, swayY: -8 },
+    ];
+  }, [calligraphyText]);
+
+  // Ancient water ripples (古風水波漣漪)
+  const ripples = useMemo(() => [
+    { id: 'r1', x: '15%', y: '22%', duration: 7, delay: 0, maxScale: 3.2 },
+    { id: 'r2', x: '80%', y: '16%', duration: 8.5, delay: 2.5, maxScale: 3.6 },
+    { id: 'r3', x: '32%', y: '68%', duration: 9, delay: 4, maxScale: 4.0 },
+    { id: 'r4', x: '85%', y: '75%', duration: 7.5, delay: 1.2, maxScale: 3.4 },
+    { id: 'r5', x: '48%', y: '42%', duration: 10, delay: 5.5, maxScale: 4.5 },
+  ], []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* Soft gradient wash in member's signature color */}
+      <div 
+        className="absolute inset-0 opacity-40"
+        style={{
+          background: `radial-gradient(ellipse at 50% 30%, ${color}28 0%, transparent 70%), radial-gradient(ellipse at 80% 80%, ${color}18 0%, transparent 60%)`,
+        }}
+      />
+
+      {/* Ancient Water Ripples (古風水波漣漪) */}
+      <div className="absolute inset-0">
+        {ripples.map((ripple) => (
+          <div
+            key={ripple.id}
+            className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            style={{ left: ripple.x, top: ripple.y }}
+          >
+            {[0, 1.3, 2.6].map((subDelay, subIdx) => (
+              <motion.div
+                key={subIdx}
+                initial={{ scale: 0.1, opacity: 0.7 }}
+                animate={{
+                  scale: [0.1, ripple.maxScale],
+                  opacity: [0.65, 0],
+                }}
+                transition={{
+                  duration: ripple.duration,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                  delay: ripple.delay + subDelay,
+                }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full border border-dashed"
+                style={{ borderColor: color }}
+              />
+            ))}
+            <motion.div
+              animate={{ opacity: [0.2, 0.7, 0.2], scale: [0.8, 1.3, 0.8] }}
+              transition={{ duration: ripple.duration, repeat: Infinity, delay: ripple.delay }}
+              className="w-2.5 h-2.5 rounded-full blur-[1px]"
+              style={{ backgroundColor: color }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Layered Flowing Ancient Water Wave SVG Curves (古風水波層疊波浪) */}
+      <div className="absolute inset-x-0 bottom-0 h-[65%] opacity-30 overflow-hidden">
+        {/* Wave Layer 1 */}
+        <motion.svg
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+          className="absolute bottom-0 w-[200%] h-64 sm:h-80 -left-[50%]"
+          animate={{ x: ['0%', '-25%', '0%'], y: [0, -14, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path
+            fill={color}
+            fillOpacity="0.35"
+            d="M0,160L48,176C96,192,192,224,288,218.7C384,213,480,171,576,165.3C672,160,768,192,864,208C960,224,1056,224,1152,197.3C1248,171,1344,117,1392,90.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          />
+        </motion.svg>
+
+        {/* Wave Layer 2 */}
+        <motion.svg
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+          className="absolute bottom-0 w-[200%] h-48 sm:h-64 -left-[20%]"
+          animate={{ x: ['-20%', '0%', '-20%'], y: [0, 10, 0] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path
+            fill={color}
+            fillOpacity="0.25"
+            d="M0,224L60,213.3C120,203,240,181,360,181.3C480,181,600,203,720,218.7C840,235,960,245,1080,229.3C1200,213,1320,171,1380,149.3L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+          />
+        </motion.svg>
+
+        {/* Wave Layer 3 - Gentle crest */}
+        <motion.svg
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+          className="absolute bottom-0 w-[200%] h-36 sm:h-52 -left-[40%]"
+          animate={{ x: ['0%', '-15%', '0%'], y: [0, -7, 0] }}
+          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path
+            fill={color}
+            fillOpacity="0.4"
+            d="M0,64L48,90.7C96,117,192,171,288,181.3C384,192,480,160,576,149.3C672,139,768,149,864,165.3C960,181,1056,203,1152,192C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          />
+        </motion.svg>
+      </div>
+
+      {/* Floating Calligraphy Text - Horizontal from Right to Left (從右到左漂浮書法文字) */}
+      {calligraphyText && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+          {floatingParticles.map((particle) => (
+            <motion.div
+              key={particle.id}
+              initial={{ x: '105vw', y: 0, opacity: 0 }}
+              animate={{
+                x: ['105vw', '-60vw'],
+                y: [0, particle.swayY, -particle.swayY, 0],
+                opacity: [0, particle.opacity, particle.opacity, 0],
+              }}
+              transition={{
+                x: {
+                  duration: particle.duration,
+                  repeat: Infinity,
+                  ease: "linear",
+                  delay: particle.delay,
+                },
+                y: {
+                  duration: particle.duration / 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+                opacity: {
+                  duration: particle.duration,
+                  repeat: Infinity,
+                  times: [0, 0.08, 0.92, 1],
+                  delay: particle.delay,
+                }
+              }}
+              style={{
+                top: particle.top,
+                fontFamily: '"Ma Shan Zheng", "Long Cang", "ZCOOL XiaoWei", "Kaiti", "STKaiti", "DFKai-SB", "Noto Serif TC", serif',
+                color: color,
+                textShadow: `0 0 20px ${color}80, 0 0 40px ${color}40`,
+              }}
+              className={`absolute whitespace-nowrap select-none font-normal tracking-[0.35em] ${particle.size} filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]`}
+            >
+              {particle.text}
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecretUnlock?: () => void }> = ({ fighterId, onBack, onSecretUnlock }) => {
   const activeFighter = FIGHTERS.find(f => f.id === fighterId) || FIGHTERS[0];
   const code = getFighterCode(fighterId);
+  const isSecondGen = fighterId >= 11 && fighterId <= 14;
   const [isDraggingSheep, setIsDraggingSheep] = useState(false);
   const [sheepClickCount, setSheepClickCount] = useState(0);
 
@@ -942,21 +1682,32 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[1000] bg-[#4C5E6E] flex flex-col font-mono overflow-y-auto scroll-smooth custom-scrollbar"
+      className={`fixed inset-0 z-[1000] flex flex-col font-mono overflow-y-auto scroll-smooth custom-scrollbar ${
+        isSecondGen ? 'bg-[#141518]' : fighterId === 1 ? 'bg-[#092b36]' : 'bg-[#4C5E6E]'
+      }`}
     >
+      {/* Background Music Player for Umiri (Continuous Loop) */}
+      {fighterId === 1 && <UmiriBackgroundMusicPlayer />}
+
       {/* SECTION 1: MAIN PROFILE */}
       <div className="min-h-screen w-full relative flex flex-col overflow-hidden border-b border-white/10">
-        {/* Background Grid */}
-        <div 
-          className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.3) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
+        {/* Background Layer: Aquatic Splash & Fish Shadows for Umiri, Ancient Water & Calligraphy for 2nd gen, Grid for others */}
+        {fighterId === 1 ? (
+          <UmiriAquaticFishAndSplashEffect />
+        ) : isSecondGen ? (
+          <AncientWaterAndCalligraphyEffect fighterId={fighterId} color={activeFighter.color} />
+        ) : (
+          <div 
+            className="absolute inset-0 opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(255,255,255,0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.3) 1px, transparent 1px)
+              `,
+              backgroundSize: '40px 40px',
+            }}
+          />
+        )}
 
       {/* Top-Left Return Button */}
       <motion.button
@@ -967,7 +1718,7 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
         onClick={onBack}
         className="absolute top-8 left-8 z-[1010] flex items-center gap-4 text-white hover:text-white/80 group"
       >
-        <div className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center group-hover:bg-white group-hover:text-[#4C5E6E] transition-all">
+        <div className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
           <span className="text-xl">←</span>
         </div>
         <span className="font-black tracking-widest text-xs uppercase">Back to Members</span>
@@ -975,12 +1726,12 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
 
       {/* Main Content - Center Screen Control Block */}
       <div className="flex-1 flex items-center justify-center relative z-10 w-full px-3 sm:px-4 md:px-6 py-16 pt-36 sm:pt-44">
-        <div className="flex flex-col xl:flex-row items-stretch gap-8 p-6 bg-slate-900/60 rounded-[2.5rem] backdrop-blur-sm max-w-[1720px] w-full shadow-[0_0_80px_rgba(255,255,255,0.15)]">
+        <div className="flex flex-col xl:flex-row items-stretch gap-8 p-6 bg-slate-900/40 rounded-[2.5rem] backdrop-blur-xl border border-white/15 max-w-[1720px] w-full shadow-[0_20px_70px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.2)]">
           
           {/* Left Column Container */}
           <div className="flex flex-col gap-4 self-stretch hidden xl:flex flex-1 max-w-[360px]">
             {/* Status Screen */}
-            <div className="relative h-20 bg-black/95 rounded-2xl overflow-hidden flex items-center justify-center shadow-inner">
+            <div className="relative h-20 bg-black/60 backdrop-blur-lg border border-white/15 rounded-2xl overflow-hidden flex items-center justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
               <div className="text-xl font-black tracking-[0.5em] animate-pulse text-white pl-[0.5em]">
                 {fighterId === 1 ? '活動進行中' : fighterId === 8 ? '廣播進行中' : '空格．等待加入'}
               </div>
@@ -990,7 +1741,7 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
             </div>
 
             {/* Community Sub Screen */}
-            <div className="relative h-[300px] bg-black/95 rounded-3xl overflow-hidden flex flex-col p-6 font-mono text-left shadow-inner">
+            <div className="relative h-[300px] bg-black/60 backdrop-blur-lg border border-white/15 rounded-3xl overflow-hidden flex flex-col p-6 font-mono text-left shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
               <div className="text-white/60 text-[11px] font-black italic border-b border-white/10 pb-2 mb-6 tracking-widest uppercase">
                 COMMUNITY_HUB
               </div>
@@ -1023,6 +1774,20 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
                         <div className="text-[11px] text-white/80 font-black">INSTAGRAM</div>
                         <div className="text-[10px] text-white/40 font-bold tracking-tighter">阿璃店長UMIRI</div>
                       </div>
+                    </a>
+
+                    <a 
+                      href="https://drive.google.com/file/d/1RpxoWiaQgc5v6Zf11_YH0JJaQWFVxVMJ/view?usp=drive_link" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 bg-cyan-400/10 p-3 rounded-xl border border-cyan-400/20 hover:bg-cyan-400/20 transition-colors"
+                    >
+                      <div className="text-2xl">🎵</div>
+                      <div className="flex-1">
+                        <div className="text-[11px] text-cyan-200 font-black">ORIGINAL_BGM</div>
+                        <div className="text-[10px] text-cyan-200/60 font-bold tracking-tighter">涼海璃專屬音樂 (Looping)</div>
+                      </div>
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
                     </a>
                   </>
                 ) : fighterId === 8 ? (
@@ -1061,8 +1826,11 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
             </div>
           </div>
 
-          {/* Main Display Screen */}
-          <div className="relative flex-[5] aspect-[16/9] bg-black/95 rounded-3xl overflow-hidden shadow-2xl group flex flex-col justify-end">
+          {/* Main Display Screen with Glassmorphism Effect */}
+          <div className="relative flex-[5] aspect-[16/9] bg-black/60 backdrop-blur-2xl border border-white/20 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.3)] group flex flex-col justify-end">
+            {/* Top Glass Highlight / Light Specular Reflection */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-white/[0.02] to-transparent pointer-events-none z-10" />
+
             {fighterId === 1 ? (
               <div className="absolute inset-0 w-full h-full">
                 <img 
@@ -1092,17 +1860,17 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
 
             {/* Construction Label */}
             {fighterId === 1 ? (
-              <div className="absolute top-6 right-6 bg-[#4C5E6E]/90 backdrop-blur-md text-white text-md font-black px-5 py-2 skew-x-[-12deg] border border-white/20 shadow-md uppercase tracking-wider font-pixel">
+              <div className="absolute top-6 right-6 bg-[#4C5E6E]/80 backdrop-blur-md text-white text-md font-black px-5 py-2 skew-x-[-12deg] border border-white/25 shadow-lg uppercase tracking-wider font-pixel z-20">
                 Official Photo
               </div>
             ) : fighterId === 8 ? (
-              <div className="absolute top-6 right-6 bg-white/10 backdrop-blur-md text-white text-md font-black px-5 py-2 skew-x-[-12deg] border border-white/20 shadow-md">
+              <div className="absolute top-6 right-6 bg-white/15 backdrop-blur-md text-white text-md font-black px-5 py-2 skew-x-[-12deg] border border-white/25 shadow-lg z-20">
                 廣播放送中
               </div>
             ) : null}
 
             {/* Character Name Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black via-black/50 to-transparent text-left">
+            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black via-black/50 to-transparent text-left z-20">
               <div className="text-3xl md:text-5xl font-black italic text-white tracking-tighter mb-4 flex items-baseline gap-3">
                 <span className="text-sm not-italic font-bold text-white/50">{code}</span>
                 {activeFighter.name}
@@ -1116,13 +1884,13 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
               </div>
             </div>
 
-            <div className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay" 
+            <div className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay z-10" 
                  style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.8) 2px, rgba(0,0,0,0.8) 4px)' }} 
             />
           </div>
 
           {/* Side Vertical Screen (Right Column) */}
-          <div className="relative flex-1 max-w-[360px] bg-black/95 rounded-3xl overflow-hidden p-6 flex flex-col font-mono text-left hidden lg:flex shadow-inner">
+          <div className="relative flex-1 max-w-[360px] bg-black/60 backdrop-blur-lg border border-white/15 rounded-3xl overflow-hidden p-6 flex flex-col font-mono text-left hidden lg:flex shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
             <div className="text-white/60 text-xs font-black italic border-b border-white/10 pb-2 mb-6 tracking-widest">
               CHARACTER_PROFILE
             </div>
@@ -1280,16 +2048,7 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
     {fighterId === 1 ? (
       <>
         {/* SECTION 2: PERSONAL INTRODUCTION */}
-        <div className="min-h-screen w-full bg-[#5D8BF4] relative flex flex-col items-center justify-center py-20 px-6 border-b border-white/10 overflow-hidden">
-          <div className="absolute inset-0 opacity-20 pointer-events-none"
-               style={{
-                 backgroundImage: `
-                   linear-gradient(to right, rgba(255,255,255,0.3) 1px, transparent 1px),
-                   linear-gradient(to bottom, rgba(255,255,255,0.3) 1px, transparent 1px)
-                 `,
-                 backgroundSize: '40px 40px',
-               }}
-          />
+        <div className="min-h-screen w-full bg-[#155e75] relative flex flex-col items-center justify-center py-20 px-6 border-b border-white/10 overflow-hidden">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1297,7 +2056,7 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
             transition={{ duration: 0.8 }}
             className="relative z-10 max-w-4xl text-center flex flex-col items-center gap-12"
           >
-            <div className="text-[11px] text-white/50 font-pixel tracking-[0.4em] uppercase">
+            <div className="text-[11px] text-cyan-200/60 font-pixel tracking-[0.4em] uppercase">
               UMIRI / MEMOIR MODULE
             </div>
             
@@ -1312,10 +2071,10 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
               </p>
             </div>
 
-            <div className="h-[2px] w-32 bg-white/30 rounded-full" />
+            <div className="h-[2px] w-32 bg-cyan-200/40 rounded-full" />
 
             <div className="flex flex-col gap-6 items-center">
-              <p className="text-xl md:text-2xl font-bold text-white/70 tracking-[0.2em]">
+              <p className="text-xl md:text-2xl font-bold text-white/80 tracking-[0.2em]">
                 但 這樣也行對吧 畢竟 
               </p>
               <motion.p 
@@ -1334,28 +2093,18 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 pointer-events-none"
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40 pointer-events-none"
           >
             <motion.div 
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-8 bg-gradient-to-b from-white/30 to-transparent rounded-full"
+              className="w-1 h-8 bg-gradient-to-b from-white/40 to-transparent rounded-full"
             />
           </motion.div>
         </div>
 
         {/* SECTION 3: ADDITIONAL INFO */}
-        <div className="min-h-screen w-full bg-[#3B62CC] relative flex flex-col items-start pt-32 pb-32 px-20">
-          <div className="absolute inset-0 opacity-20 pointer-events-none"
-               style={{
-                 backgroundImage: `
-                   linear-gradient(to right, rgba(255,255,255,0.3) 1px, transparent 1px),
-                   linear-gradient(to bottom, rgba(255,255,255,0.3) 1px, transparent 1px)
-                 `,
-                 backgroundSize: '40px 40px',
-               }}
-          />
-          
+        <div className="min-h-screen w-full bg-[#0891b2] relative flex flex-col items-start pt-32 pb-32 px-20 overflow-hidden">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1451,17 +2200,21 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
         {/* SECTION 2: UNDER CONSTRUCTION PAGE */}
         <div 
           className="min-h-screen w-full relative flex flex-col items-center justify-center py-20 px-6 overflow-hidden border-t border-white/10"
-          style={{ backgroundColor: activeFighter.color ? `${activeFighter.color}15` : '#1e1b4b' }}
+          style={{ backgroundColor: isSecondGen ? '#121316' : (activeFighter.color ? `${activeFighter.color}15` : '#1e1b4b') }}
         >
-          <div className="absolute inset-0 opacity-15 pointer-events-none"
-               style={{
-                 backgroundImage: `
-                   linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
-                   linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
-                 `,
-                 backgroundSize: '40px 40px',
-               }}
-          />
+          {isSecondGen ? (
+            <AncientWaterAndCalligraphyEffect fighterId={fighterId} color={activeFighter.color} />
+          ) : (
+            <div className="absolute inset-0 opacity-15 pointer-events-none"
+                 style={{
+                   backgroundImage: `
+                     linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
+                   `,
+                   backgroundSize: '40px 40px',
+                 }}
+            />
+          )}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -1504,6 +2257,11 @@ const PREFIX_MAP: Record<number, string> = {
   4: 'M', // Purple
   5: 'Y', // Yellow
   6: 'P', // Pink
+  7: 'S', // Sky Blue
+  11: 'YY', // Yojiuta Yellow
+  12: 'YR', // Yojiuta Red
+  13: 'YP', // Yojiuta Purple
+  14: 'YG', // Yojiuta Green
 };
 
 const BroadcastStudioPage: React.FC<{ 
