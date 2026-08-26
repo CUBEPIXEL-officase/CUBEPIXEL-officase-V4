@@ -1090,7 +1090,7 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
             <div className="w-full flex justify-between items-center text-[9px] tracking-widest text-white/30 uppercase pt-2 font-mono">
               <div className="flex items-center gap-1.5">
                 <MobilePixelHeart color="#FFB347" size="xs" pulse className="translate-y-[-1px]" />
-                <span>QPKS-APP-VER2.0</span>
+                <span>QPKS-APP-VER3.0</span>
               </div>
               <div>{currentTime}</div>
             </div>
@@ -1931,19 +1931,62 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
                           </div>
                         </motion.div>
 
-                        {/* 4 Gray Empty Slots */}
-                        <div className="grid grid-cols-2 gap-3 w-full">
-                          {Array.from({ length: 4 }).map((_, i) => (
-                            <div
-                              key={i}
-                              className="relative aspect-[16/9] bg-black/90 w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center select-none border border-white/10 shadow-inner"
-                            >
-                              <div className="text-xl text-white/5 font-black font-pixel">?</div>
-                              <div className="absolute bottom-1.5 text-[7px] text-white/5 font-pixel uppercase tracking-[0.2em]">
-                                LOCKED
+                        {/* 蕷蒔泡沫YOJIUTA_二期生預定 */}
+                        <div className="pt-2">
+                          <div className="text-[9px] text-white/40 font-pixel tracking-[0.2em] mb-2 uppercase flex items-center gap-2">
+                            <span>蕷蒔泡沫YOJIUTA_二期生預定</span>
+                            <span className="h-[1px] bg-white/10 flex-1" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3 w-full">
+                            {[
+                              { id: 'm-gen2-yellow', color: '#B8AC78', role: '霧霾黃擔當' },
+                              { id: 'm-gen2-red', color: '#B06565', role: '霧霾紅擔當' },
+                              { id: 'm-gen2-purple', color: '#9985A8', role: '霧霾紫擔當' },
+                              { id: 'm-gen2-green', color: '#728E75', role: '霧霾綠擔當' },
+                            ].map((slot) => (
+                              <div
+                                key={slot.id}
+                                className="relative aspect-[16/9] bg-black/90 w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center select-none border border-white/15 shadow-inner"
+                              >
+                                <div 
+                                  className="text-3xl font-black font-pixel drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                  style={{ color: slot.color }}
+                                >
+                                  ?
+                                </div>
+                                <div 
+                                  className="absolute top-1.5 left-1.5 text-black text-[7px] font-black px-1.5 py-0.5 rounded font-pixel tracking-wider shadow-sm"
+                                  style={{ backgroundColor: slot.color }}
+                                >
+                                  {slot.role}
+                                </div>
+                                <div className="absolute bottom-1.5 text-[8px] text-white/80 font-pixel font-bold">
+                                  ?????
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 4 Gray Empty Slots - 候選名單 */}
+                        <div className="pt-1">
+                          <div className="text-[9px] text-white/40 font-pixel tracking-[0.2em] mb-2 uppercase flex items-center gap-2">
+                            <span>候選名單_待招募</span>
+                            <span className="h-[1px] bg-white/10 flex-1" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3 w-full">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className="relative aspect-[16/9] bg-black/90 w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center select-none border border-white/10 shadow-inner"
+                              >
+                                <div className="text-xl text-white/5 font-black font-pixel">?</div>
+                                <div className="absolute bottom-1.5 text-[7px] text-white/5 font-pixel uppercase tracking-[0.2em]">
+                                  LOCKED
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </motion.div>

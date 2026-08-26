@@ -422,6 +422,12 @@ const CharacterSelect: React.FC<{
   const PRODUCER_FIGHTER = FIGHTERS.find(f => f.id === 1)!;
   const HONORARY_FIGHTER = FIGHTERS.find(f => f.id === 8)!;
   const INITIAL_MEMBERS = FIGHTERS.filter(f => f.id !== 1 && f.id !== 8);
+  const SECOND_GEN_MEMBERS = [
+    { id: 'yojiuta-yellow', name: '?????', color: '#B8AC78', role: '霧霾黃擔當', icon: '?' },
+    { id: 'yojiuta-red', name: '?????', color: '#B06565', role: '霧霾紅擔當', icon: '?' },
+    { id: 'yojiuta-purple', name: '?????', color: '#9985A8', role: '霧霾紫擔當', icon: '?' },
+    { id: 'yojiuta-green', name: '?????', color: '#728E75', role: '霧霾綠擔當', icon: '?' },
+  ];
   const DISABLED_SLOTS = Array.from({ length: 16 }, (_, i) => ({
     id: 100 + i,
     name: '🔒 LOCK',
@@ -535,7 +541,45 @@ const CharacterSelect: React.FC<{
           </div>
         </div>
 
-        {/* ROW 3: Candidates (候選名單_待招募) */}
+        {/* ROW 3: 蕷蒔泡沫YOJIUTA_二期生預定 */}
+        <div className="mb-12">
+          <div className="text-[10px] sm:text-xs text-white/40 font-pixel tracking-[0.25em] mb-5 uppercase flex items-center gap-3 px-2">
+            <span>蕷蒔泡沫YOJIUTA_二期生預定</span>
+            <span className="h-[1px] bg-white/10 flex-1" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+            {SECOND_GEN_MEMBERS.map((slot) => (
+              <motion.div
+                key={slot.id}
+                whileHover={{ y: -10, scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="relative aspect-[16/9] rounded-3xl overflow-hidden cursor-default bg-black/80 hover:bg-black/90 border-2 border-white/15 hover:border-white/40 shadow-[0_12px_36px_rgba(0,0,0,0.6)] hover:shadow-[0_0_45px_rgba(255,255,255,0.2)] transition-all text-left"
+              >
+                <div 
+                  className="absolute inset-0 flex items-center justify-center text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[11rem] opacity-95 font-black font-pixel drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]"
+                  style={{ color: slot.color }}
+                >
+                  {slot.icon}
+                </div>
+
+                {slot.role && (
+                  <div 
+                    className="absolute top-3 left-3 text-black text-[9px] sm:text-xs md:text-sm font-black px-2 py-1 rounded-lg uppercase font-pixel tracking-widest shadow-md"
+                    style={{ backgroundColor: slot.color }}
+                  >
+                    {slot.role}
+                  </div>
+                )}
+
+                <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 text-sm sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black italic text-white tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  {slot.name}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* ROW 4: Candidates (候選名單_待招募) */}
         <div>
           <div className="text-[10px] sm:text-xs text-white/40 font-pixel tracking-[0.25em] mb-5 uppercase flex items-center gap-3 px-2">
             <span>候選名單_待招募 / CANDIDATES</span>
@@ -4218,8 +4262,8 @@ export default function App() {
             const hour = new Date().getHours();
             const isLateNight = hour >= 1 && hour < 9;
             return isLateNight 
-              ? "紡塊像素CubePixel_2026 感謝團長涼海璃 大半夜不睡覺還在更新官網 《QPKS-VER3.0.0》"
-              : "紡塊像素CubePixel_2026 感謝團長涼海璃製作 《QPKS-VER3.0.0》";
+              ? "紡塊像素CubePixel_2026 感謝團長涼海璃 大半夜不睡覺還在更新官網 《QPKS-VER4.0.0》"
+              : "紡塊像素CubePixel_2026 感謝團長涼海璃製作 《QPKS-VER4.0.0》";
           })()}
         </span>
       </div>
