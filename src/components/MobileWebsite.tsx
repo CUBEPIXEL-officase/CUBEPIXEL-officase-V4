@@ -1198,8 +1198,8 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
                     <span className="text-[#D1B3FF] font-bold">02-8925-2329</span>
                   </span>
                 </div>
-                <div className="text-[7.5px] text-emerald-400/80 font-mono tracking-tight">
-                  ⏰ 營業時間依照店內公告為基準
+                <div className="text-[7.5px] text-amber-300 font-mono tracking-tight font-bold">
+                  ⏰ 全預約制 依實際情況為準
                 </div>
               </div>
             </div>
@@ -1212,6 +1212,39 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
               {/* Scrollable Container */}
               <div className="w-full h-full flex flex-col justify-between gap-2.5 overflow-y-auto pr-0.5 custom-scrollbar z-10">
                 
+                {/* 手機版獨有釘選公告 常態性釘選在最上面 */}
+                <div className="w-full bg-gradient-to-br from-red-950/90 via-[#22060A]/95 to-red-950/90 border border-red-500/60 rounded-2xl p-2.5 sm:p-3 shadow-[0_0_16px_rgba(239,68,68,0.25)] relative overflow-hidden text-left flex-none">
+                  {/* Decorative corner borders */}
+                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-red-400" />
+                  <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-red-400" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-red-400" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-red-400" />
+
+                  {/* Header Badge */}
+                  <div className="flex items-center justify-between gap-1 mb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs">📌</span>
+                      <span className="bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full border border-red-500/40 font-pixel text-[8px] tracking-wider uppercase font-bold">
+                        釘選公告 / PINNED NOTICE
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[7.5px] font-mono text-red-400/80 font-bold">常態釘選</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+                    </div>
+                  </div>
+
+                  {/* Pinned Content */}
+                  <div className="text-[10.5px] sm:text-xs font-bold text-white leading-relaxed font-rounded space-y-0.5 bg-black/40 p-2 sm:p-2.5 rounded-xl border border-red-500/20">
+                    <p className="text-red-100">
+                      因政客騷擾事件發生 本店於即日起改為全預約制
+                    </p>
+                    <p className="text-red-200">
+                      並且已將門把手移除
+                    </p>
+                  </div>
+                </div>
+
                 {/* 4 個一排的 ICON 序列區 */}
                 <div className="w-full space-y-1.5">
                   <div className="flex justify-between items-center text-[8px] text-pink-300/60 font-mono tracking-widest uppercase px-1">
@@ -1408,6 +1441,42 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
 
                 {/* News List Cards - Desktop Style Adaptations for Mobile */}
                 <div className="space-y-4 text-left w-full">
+                  {/* News Card: 釘選公告 (Pinned Notice: 因政客騷擾事件發生 本店於即日起改為全預約制 並且已將門把手移除) */}
+                  <div className="w-full bg-gradient-to-br from-[#26070B] via-[#1a0508] to-[#26070B] backdrop-blur-md rounded-2xl p-4 border border-red-500/60 relative overflow-hidden flex flex-col items-start justify-center text-left hover:border-red-400 transition-all duration-300 shadow-[0_0_22px_rgba(239,68,68,0.3)]">
+                    <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-[0.5px] border-l-[0.5px] border-red-400" />
+                    <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-[0.5px] border-r-[0.5px] border-red-400" />
+                    <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-[0.5px] border-l-[0.5px] border-red-400" />
+                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-[0.5px] border-r-[0.5px] border-red-400" />
+                    
+                    <div className="flex flex-wrap items-center justify-between w-full gap-2 mb-3 pb-2 border-b border-red-500/30">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-red-500/20 text-red-300 border border-red-400/50 rounded font-pixel uppercase tracking-widest">
+                          <span>📌</span> 釘選公告
+                        </span>
+                        <span className="text-xs font-mono text-red-400/90 font-bold">常態釘選</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-red-400/60 select-none">PINNED NOTICE</span>
+                    </div>
+
+                    <h3 className="text-base font-black text-white mb-2 tracking-wider text-red-100">
+                      【重要公告】營業模式重大調整通知 🚨
+                    </h3>
+                    
+                    <div className="w-full bg-black/40 p-3 rounded-xl border border-red-500/20 my-1">
+                      <p className="text-xs sm:text-sm text-red-200 leading-relaxed font-mono font-bold">
+                        因政客騷擾事件發生 本店於即日起改為全預約制<br />
+                        並且已將門把手移除
+                      </p>
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-red-500/30 flex items-center justify-between w-full">
+                      <p className="text-[10px] text-red-300/60 font-mono">
+                        常態性置頂公告 • 來店前請務必透過預約管道聯繫
+                      </p>
+                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" />
+                    </div>
+                  </div>
+
                   {/* News Card: 8月10日 涼海璃請假與居酒屋暫停營業通知 */}
                   <div className="w-full bg-black/40 backdrop-blur-md rounded-2xl p-4 border-[0.5px] border-white/10 relative overflow-hidden flex flex-col items-start justify-center text-left hover:border-[#D1B3FF]/30 transition-all duration-300 shadow-lg">
                     <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-[0.5px] border-l-[0.5px] border-[#D1B3FF]" />
@@ -1622,6 +1691,7 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
                     <div className="text-xs text-white/80 leading-relaxed font-mono font-medium space-y-1">
                       <p>📍 <span className="text-amber-300 font-bold">地址：</span>新北市永和區福和路120號之2</p>
                       <p>📞 <span className="text-purple-300 font-bold">電話：</span>02-8925-2329</p>
+                      <p>⏰ <span className="text-emerald-400 font-bold">營業時間：</span>全預約制 依實際情況為準</p>
                       <p className="text-[11px] text-white/60 pt-0.5">
                         門市開放情況與開門注意事項可參閱「社群預約功能」說明。
                       </p>

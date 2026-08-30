@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'motion/react';
-import { Radio, Send, User, Lock, CornerDownRight, X, Heart, Save, Trash2, History, ArrowLeft, Volume2, VolumeX, Play, Pause, Disc, Music } from 'lucide-react';
+import { Radio, Send, User, Lock, CornerDownRight, X, Heart, Save, Trash2, History, ArrowLeft } from 'lucide-react';
 const EventCalendar = React.lazy(() => 
   import('./components/EventCalendar').then(module => ({ default: module.EventCalendar }))
 );
@@ -838,215 +838,6 @@ const CALLIGRAPHY_TEXT_MAP: Record<number, string> = {
   11: '四方八面',
 };
 
-// --- Umiri Background Music Controller & Continuous Audio Player ---
-const GOOGLE_DRIVE_UMIRI_BGM_ID = '1RpxoWiaQgc5v6Zf11_YH0JJaQWFVxVMJ';
-const GOOGLE_DRIVE_UMIRI_BGM_URL = `https://docs.google.com/uc?export=download&id=${GOOGLE_DRIVE_UMIRI_BGM_ID}`;
-const GOOGLE_DRIVE_UMIRI_BGM_PREVIEW = `https://drive.google.com/file/d/${GOOGLE_DRIVE_UMIRI_BGM_ID}/preview`;
-
-const UmiriBackgroundMusicPlayer: React.FC = () => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(0.65);
-  const [useIframeFallback, setUseIframeFallback] = useState(false);
-
-  // Initialize and attempt autoplay
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.volume = volume;
-    audio.loop = true;
-
-    // Attempt autoplay immediately
-    const startPlay = () => {
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {
-        // Autoplay policy prevented immediate playback; wait for user interaction
-        setIsPlaying(false);
-      });
-    };
-
-    startPlay();
-
-    // Trigger on first user interaction anywhere on the window if autoplay was restricted
-    const handleFirstInteraction = () => {
-      if (audio.paused) {
-        audio.play().then(() => {
-          setIsPlaying(true);
-        }).catch(() => {
-          setUseIframeFallback(true);
-        });
-      }
-    };
-
-    window.addEventListener('click', handleFirstInteraction, { once: true });
-    window.addEventListener('keydown', handleFirstInteraction, { once: true });
-    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
-    window.addEventListener('scroll', handleFirstInteraction, { once: true });
-
-    return () => {
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-      window.removeEventListener('scroll', handleFirstInteraction);
-      audio.pause();
-    };
-  }, []);
-
-  const togglePlay = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {
-        setUseIframeFallback(true);
-      });
-    }
-  };
-
-  const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isMuted) {
-      audio.muted = false;
-      setIsMuted(false);
-    } else {
-      audio.muted = true;
-      setIsMuted(true);
-    }
-  };
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVol = parseFloat(e.target.value);
-    setVolume(newVol);
-    if (audioRef.current) {
-      audioRef.current.volume = newVol;
-      if (newVol > 0 && isMuted) {
-        audioRef.current.muted = false;
-        setIsMuted(false);
-      }
-    }
-  };
-
-  return (
-    <>
-      {/* HTML5 Audio Stream Element */}
-      <audio
-        ref={audioRef}
-        src={GOOGLE_DRIVE_UMIRI_BGM_URL}
-        loop
-        preload="auto"
-        onError={() => {
-          setUseIframeFallback(true);
-        }}
-        onEnded={() => {
-          if (audioRef.current) {
-            audioRef.current.currentTime = 0;
-            audioRef.current.play().catch(() => {});
-          }
-        }}
-      />
-
-      {/* Embedded Google Drive Preview Fallback */}
-      {useIframeFallback && (
-        <iframe
-          src={GOOGLE_DRIVE_UMIRI_BGM_PREVIEW}
-          allow="autoplay"
-          title="Umiri Background Music"
-          className="hidden"
-        />
-      )}
-
-      {/* Floating Modern Glassmorphic Audio Controller */}
-      <motion.div
-        initial={{ opacity: 0, y: -20, scale: 0.9 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="fixed top-8 right-8 z-[1015] flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/70 backdrop-blur-xl border border-cyan-400/35 text-white shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(34,211,238,0.25)] group"
-      >
-        {/* Animated Spinning Music Disc */}
-        <motion.div
-          animate={isPlaying ? { rotate: 360 } : { rotate: 0 }}
-          transition={isPlaying ? { duration: 4, repeat: Infinity, ease: 'linear' } : { duration: 0.4 }}
-          className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 via-sky-400 to-teal-300 p-[2px] flex items-center justify-center shadow-[0_0_12px_rgba(34,211,238,0.4)] flex-shrink-0 cursor-pointer"
-          onClick={togglePlay}
-          title={isPlaying ? "點擊暫停背景音樂" : "點擊播放背景音樂"}
-        >
-          <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center">
-            <Disc className={`w-4 h-4 ${isPlaying ? 'text-cyan-300' : 'text-slate-400'}`} />
-          </div>
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-cyan-200" />
-        </motion.div>
-
-        {/* Track Info & Equalizer */}
-        <div className="flex flex-col justify-center min-w-[110px] text-left select-none">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-black text-cyan-200 tracking-wider font-pixel">BGM / 涼海璃</span>
-            {/* Visualizer Wave Bars */}
-            <div className="flex items-end gap-[2px] h-3">
-              {[0.6, 1.2, 0.8, 1.4].map((d, idx) => (
-                <motion.div
-                  key={idx}
-                  animate={isPlaying ? { height: ['20%', '100%', '30%'] } : { height: '20%' }}
-                  transition={isPlaying ? { duration: 0.55 + idx * 0.15, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.2 }}
-                  className={`w-[2.5px] rounded-full ${isPlaying ? 'bg-cyan-400 shadow-[0_0_4px_rgba(34,211,238,0.8)]' : 'bg-white/20'}`}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="text-[9px] text-white/50 tracking-tight flex items-center gap-1">
-            <span className={`inline-block w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-            {isPlaying ? '持續播放中 (Loop)' : '已暫停 (點擊播放)'}
-          </div>
-        </div>
-
-        {/* Action Controls */}
-        <div className="flex items-center gap-1.5 pl-1 border-l border-white/15">
-          {/* Play/Pause Button */}
-          <button
-            onClick={togglePlay}
-            className="w-7 h-7 rounded-lg bg-white/10 hover:bg-cyan-400/20 flex items-center justify-center text-white/90 hover:text-cyan-200 transition-colors"
-            title={isPlaying ? "暫停" : "播放"}
-          >
-            {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
-          </button>
-
-          {/* Mute/Unmute Toggle */}
-          <button
-            onClick={toggleMute}
-            className="w-7 h-7 rounded-lg bg-white/10 hover:bg-cyan-400/20 flex items-center justify-center text-white/90 hover:text-cyan-200 transition-colors"
-            title={isMuted ? "解除靜音" : "靜音"}
-          >
-            {isMuted ? <VolumeX className="w-3.5 h-3.5 text-red-400" /> : <Volume2 className="w-3.5 h-3.5" />}
-          </button>
-
-          {/* Volume Slider (expands on hover) */}
-          <div className="w-0 overflow-hidden group-hover:w-16 transition-all duration-300 flex items-center">
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              value={isMuted ? 0 : volume}
-              onChange={handleVolumeChange}
-              className="w-14 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-              title={`音量: ${Math.round(volume * 100)}%`}
-            />
-          </div>
-        </div>
-      </motion.div>
-    </>
-  );
-};
-
 // --- Swimming Fish Silhouette Graphic ---
 const SwimmingFishGraphic: React.FC<{ color?: string; opacity?: number }> = ({ 
   color = '#38bdf8', 
@@ -1686,9 +1477,6 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
         isSecondGen ? 'bg-[#141518]' : fighterId === 1 ? 'bg-[#092b36]' : 'bg-[#4C5E6E]'
       }`}
     >
-      {/* Background Music Player for Umiri (Continuous Loop) */}
-      {fighterId === 1 && <UmiriBackgroundMusicPlayer />}
-
       {/* SECTION 1: MAIN PROFILE */}
       <div className="min-h-screen w-full relative flex flex-col overflow-hidden border-b border-white/10">
         {/* Background Layer: Aquatic Splash & Fish Shadows for Umiri, Ancient Water & Calligraphy for 2nd gen, Grid for others */}
@@ -1774,20 +1562,6 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
                         <div className="text-[11px] text-white/80 font-black">INSTAGRAM</div>
                         <div className="text-[10px] text-white/40 font-bold tracking-tighter">阿璃店長UMIRI</div>
                       </div>
-                    </a>
-
-                    <a 
-                      href="https://drive.google.com/file/d/1RpxoWiaQgc5v6Zf11_YH0JJaQWFVxVMJ/view?usp=drive_link" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 bg-cyan-400/10 p-3 rounded-xl border border-cyan-400/20 hover:bg-cyan-400/20 transition-colors"
-                    >
-                      <div className="text-2xl">🎵</div>
-                      <div className="flex-1">
-                        <div className="text-[11px] text-cyan-200 font-black">ORIGINAL_BGM</div>
-                        <div className="text-[10px] text-cyan-200/60 font-bold tracking-tighter">涼海璃專屬音樂 (Looping)</div>
-                      </div>
-                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
                     </a>
                   </>
                 ) : fighterId === 8 ? (
