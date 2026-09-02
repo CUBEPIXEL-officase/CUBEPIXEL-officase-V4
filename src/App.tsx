@@ -15,6 +15,7 @@ const BannedListPage = React.lazy(() =>
 
 import { MobileWebsite } from './components/MobileWebsite';
 import { DarkRedSubPage } from './components/DarkRedSubPage';
+import { EscalatorMonologueSubpage } from './components/EscalatorMonologueSubpage';
 import { umiriPhotoBase64 as umiriOfficialPhoto } from './assets/umiriPhotoBase64';
 
 const COLORS = [
@@ -1360,6 +1361,7 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
   const isSecondGen = fighterId >= 11 && fighterId <= 14;
   const [isDraggingSheep, setIsDraggingSheep] = useState(false);
   const [sheepClickCount, setSheepClickCount] = useState(0);
+  const [showEscalatorMonologue, setShowEscalatorMonologue] = useState(false);
 
   // Load custom Snoozing Hatsune Miku wait cursor for Umiri's special page only
   useEffect(() => {
@@ -1828,37 +1830,17 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative z-10 max-w-4xl text-center flex flex-col items-center gap-12"
+            className="relative z-10 max-w-4xl text-center flex flex-col items-center gap-10"
           >
             <div className="text-[11px] text-cyan-200/60 font-pixel tracking-[0.4em] uppercase">
               UMIRI / MEMOIR MODULE
             </div>
             
-            <div className="flex flex-col gap-8 text-white">
-              <p className="text-2xl md:text-4xl font-extrabold leading-normal tracking-[0.12em] drop-shadow-[0_0_15px_rgba(255,255,255,0.25)]">
-                大家好 我是涼海璃 是紡塊像素偶像團的團長<br />
-                也是這個團的遜砲擔當
+            <div className="flex flex-col gap-6 text-white max-w-3xl">
+              <p className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-relaxed md:leading-normal tracking-[0.04em] sm:tracking-[0.06em] drop-shadow-[0_0_25px_rgba(255,255,255,0.3)] italic">
+                Mira esa marioneta de cristal tan lamentable,<br />
+                frágil y entrañable.
               </p>
-              <p className="text-2xl md:text-4xl font-extrabold leading-normal tracking-[0.12em] drop-shadow-[0_0_15px_rgba(255,255,255,0.25)]">
-                總是在遷徙 也總是在斜槓<br />
-                偶像當一半現在還開了一間居酒屋
-              </p>
-            </div>
-
-            <div className="h-[2px] w-32 bg-cyan-200/40 rounded-full" />
-
-            <div className="flex flex-col gap-6 items-center">
-              <p className="text-xl md:text-2xl font-bold text-white/80 tracking-[0.2em]">
-                但 這樣也行對吧 畢竟 
-              </p>
-              <motion.p 
-                initial={{ scale: 0.95, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-4xl md:text-7xl font-black text-[#FFFF00] tracking-[0.2em] drop-shadow-[0_0_30px_rgba(255,255,0,0.6)] italic"
-              >
-                生きでりゃいい。
-              </motion.p>
             </div>
           </motion.div>
           
@@ -1966,6 +1948,25 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
                 </div>
               </motion.div>
             </div>
+
+            {/* SECTION 3 BOTTOM: 新按鈕 - 某璃的獨白 */}
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-start w-full gap-6">
+              <motion.button
+                whileHover={{ scale: 1.03, boxShadow: '0 0 35px rgba(185, 28, 28, 0.6)' }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowEscalatorMonologue(true)}
+                className="w-full sm:w-auto px-8 py-4 bg-[#1a0206] border-2 border-red-600/80 hover:border-red-500 rounded-2xl text-red-400 hover:text-white font-mono font-bold text-base md:text-lg tracking-[0.2em] shadow-[0_0_25px_rgba(185,28,28,0.35)] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer relative group overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-red-600/10 group-hover:bg-red-600/20 transition-all duration-300" />
+                <span className="text-red-500 text-xl group-hover:scale-110 transition-transform">🪜</span>
+                <span className="relative z-10 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] font-mono">
+                  某璃的獨白
+                </span>
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-red-950/80 border border-red-600/50 text-red-300 font-pixel uppercase tracking-widest ml-2">
+                  MONOLOGUE
+                </span>
+              </motion.button>
+            </div>
           </motion.div>
         </div>
       </>
@@ -2013,6 +2014,13 @@ const UmiriSpecialPage: React.FC<{ fighterId: number; onBack: () => void; onSecr
         </div>
       </>
     )}
+
+    {/* Full Screen Escalator Monologue Modal */}
+    <AnimatePresence>
+      {showEscalatorMonologue && (
+        <EscalatorMonologueSubpage onClose={() => setShowEscalatorMonologue(false)} />
+      )}
+    </AnimatePresence>
   </motion.div>
   );
 };

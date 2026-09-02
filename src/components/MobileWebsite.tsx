@@ -4,6 +4,7 @@ import { Sparkles, Monitor, RefreshCw, ChevronLeft, AlertTriangle, Lock } from '
 import { EventCalendar } from './EventCalendar';
 import { BusinessCardSubpage } from './BusinessCardSubpage';
 import { SpecialNoticeSubpage } from './SpecialNoticeSubpage';
+import { EscalatorMonologueSubpage } from './EscalatorMonologueSubpage';
 import { umiriPhotoBase64 as umiriOfficialPhoto } from '../assets/umiriPhotoBase64';
 
 const TANJIRO_IMAGE_URL = "/images/tanjiro_qposket.jpg";
@@ -772,6 +773,7 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
   const [showSecretSubpage, setShowSecretSubpage] = useState(false);
   const [showBusinessCardSubpage, setShowBusinessCardSubpage] = useState(false);
   const [showSpecialNoticeSubpage, setShowSpecialNoticeSubpage] = useState(false);
+  const [showMonologueSubpage, setShowMonologueSubpage] = useState(false);
   const [mobileSheepClickCount, setMobileSheepClickCount] = useState(0);
   const isSecretHeartPublished = false; // 預設隱藏發布，灰色心不可點擊
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -1352,8 +1354,8 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
                       </div>
                     </motion.button>
 
-                    {/* 8~15: 八個灰色佔位符 (8 Gray Placeholders) */}
-                    {Array.from({ length: 8 }).map((_, index) => (
+                    {/* 8~14: 七個灰色佔位符 (7 Gray Placeholders) */}
+                    {Array.from({ length: 7 }).map((_, index) => (
                       <div
                         key={`placeholder-${index}`}
                         className="aspect-square w-full bg-slate-800/20 border border-slate-700/30 rounded-2xl flex items-center justify-center transition-all opacity-40 cursor-not-allowed select-none shadow-[0_0_8px_rgba(0,0,0,0.2)]"
@@ -1364,6 +1366,19 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
                         </div>
                       </div>
                     ))}
+
+                    {/* 15. 某璃的獨白 (暗血紅色格 - 倒數第二個，最後一個黑色的左邊) */}
+                    <motion.button
+                      onClick={() => setShowMonologueSubpage(true)}
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.92 }}
+                      className="aspect-square w-full bg-[#3d0308]/90 hover:bg-[#5a050d] border border-red-700/60 hover:border-red-500 rounded-2xl flex items-center justify-center transition-all shadow-[0_0_15px_rgba(185,28,28,0.35)] hover:shadow-[0_0_22px_rgba(239,68,68,0.5)] group cursor-pointer"
+                      title="某璃的獨白"
+                    >
+                      <div className="drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">
+                        <MobilePixelHeart color="#8B0000" size="lg" pulse />
+                      </div>
+                    </motion.button>
 
                     {/* 16. 特別公告（常態發布） (Glossy Black / Pure White Exclamation Mark) */}
                     <motion.button
@@ -3196,6 +3211,11 @@ export const MobileWebsite: React.FC<MobileWebsiteProps> = () => {
         {/* Special Notice Subpage Modal (特別公告（常態發布）) */}
         {showSpecialNoticeSubpage && (
           <SpecialNoticeSubpage onClose={() => setShowSpecialNoticeSubpage(false)} />
+        )}
+
+        {/* Escalator Monologue Subpage Modal (登山電扶梯 全螢幕文字區) */}
+        {showMonologueSubpage && (
+          <EscalatorMonologueSubpage onClose={() => setShowMonologueSubpage(false)} />
         )}
       </AnimatePresence>
     </div>
