@@ -102,7 +102,7 @@ const getMonthDays = (referenceDate: Date): MonthDay[] => {
 // Colors mapping matching specified criteria
 export const CATEGORY_COLORS: Record<EventCategory, { hex: string, label: string, desc: string }> = {
   leave: { hex: '#F08080', label: '成員請假', desc: '成員公休與自主練習日' },       // Red
-  base: { hex: '#FFB347', label: '基地活動', desc: '居酒屋與實體基地特別企劃' },   // Orange
+  base: { hex: '#FFB347', label: '店面活動', desc: '居酒屋店面與實體基地特別企劃' }, // Orange
   performance: { hex: '#FFFF00', label: '公演相關', desc: 'Live舞台、先行直播與公演' }, // Yellow
   merch: { hex: '#7CFC00', label: '特別物販', desc: '官方快閃周邊與特典販售' },    // Green
   birthday: { hex: '#9ADDFF', label: '生日會直播', desc: '團體成員線上慶生特番' },  // Blue
@@ -117,7 +117,7 @@ export const isCategoryHighlighted = (category: EventCategory, mode: 'all' | 'st
   }
   
   if (mode === 'store-only') {
-    // 基地活動、特別物販、常駐活動 顯示為彩色
+    // 店面活動、特別物販、常駐活動 顯示為彩色
     return category === 'base' || category === 'merch' || category === 'regular';
   }
   
@@ -129,7 +129,7 @@ export const isCategoryHighlighted = (category: EventCategory, mode: 'all' | 'st
   return false;
 };
 
-// Unified official schedule database for July 2026
+// Unified official schedule database
 const EVENTS: Record<string, CalendarEvent | CalendarEvent[]> = {
   '2026-07-14': {
     title: '酸欠像素偶像居酒屋 開始試營運',
@@ -159,7 +159,22 @@ const EVENTS: Record<string, CalendarEvent | CalendarEvent[]> = {
       subtitle: 'Izakaya Closed (Temporary Suspension)',
       category: 'other',
     }
-  ]
+  ],
+  '2026-08-21': {
+    title: '涼海すう生日同好會',
+    subtitle: 'Suzumi Suu Birthday Gathering (Store Event)',
+    category: 'base',
+  },
+  '2026-08-22': {
+    title: '涼海すう生日同好會',
+    subtitle: 'Suzumi Suu Birthday Gathering (Store Event)',
+    category: 'base',
+  },
+  '2026-08-23': {
+    title: '涼海すう生日同好會',
+    subtitle: 'Suzumi Suu Birthday Gathering (Store Event)',
+    category: 'base',
+  }
 };
 
 export const getEventsForDate = (dateStr: string): CalendarEvent[] => {
@@ -170,6 +185,18 @@ export const getEventsForDate = (dateStr: string): CalendarEvent[] => {
       list.push(...val);
     } else {
       list.push(val);
+    }
+  } else {
+    // Fallback: match by MM-DD if exact year string is not found
+    const monthDay = dateStr.slice(5);
+    const matchedKey = Object.keys(EVENTS).find(k => k.slice(5) === monthDay);
+    if (matchedKey) {
+      const fallbackVal = EVENTS[matchedKey];
+      if (Array.isArray(fallbackVal)) {
+        list.push(...fallbackVal);
+      } else {
+        list.push(fallbackVal);
+      }
     }
   }
 
