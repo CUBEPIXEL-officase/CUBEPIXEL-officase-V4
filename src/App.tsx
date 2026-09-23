@@ -109,6 +109,8 @@ const FIGHTERS = [
   { id: 12, name: '?????', color: '#B06565', icon: '?' },
   { id: 13, name: '?????', color: '#9985A8', icon: '?' },
   { id: 14, name: '?????', color: '#728E75', icon: '?' },
+  // 獨立活動藝人 | VTUBER企劃
+  { id: 15, name: 'YURUKIRA', color: '#A855F7', icon: '?', profile: { name: 'YURUKIRA', enName: 'YURUKIRA' } },
 ];
 
 const getFighterCode = (id: number | undefined): string => {
@@ -119,6 +121,7 @@ const getFighterCode = (id: number | undefined): string => {
   if (id === 12) return 'Y02';
   if (id === 13) return 'Y03';
   if (id === 14) return 'Y04';
+  if (id === 15) return 'V01';
   return `F0${id}`;
 };
 
@@ -134,6 +137,7 @@ const getRoleTag = (id: number): string | null => {
     case 12: return '霧霾紅擔當';
     case 13: return '霧霾紫擔當';
     case 14: return '霧霾綠擔當';
+    case 15: return 'VTUBER';
     default: return null;
   }
 };
@@ -437,6 +441,7 @@ const CharacterSelect: React.FC<{
   const HONORARY_FIGHTER = FIGHTERS.find(f => f.id === 8)!;
   const INITIAL_MEMBERS = FIGHTERS.filter(f => f.id !== 1 && f.id !== 8 && f.id < 10);
   const SECOND_GEN_MEMBERS = FIGHTERS.filter(f => f.id >= 11 && f.id <= 14);
+  const INDEPENDENT_MEMBERS = FIGHTERS.filter(f => f.id === 15);
   const DISABLED_SLOTS = Array.from({ length: 16 }, (_, i) => ({
     id: 100 + i,
     name: '🔒 LOCK',
@@ -564,6 +569,45 @@ const CharacterSelect: React.FC<{
                 whileHover={{ y: -10, scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
                 className="relative aspect-[16/9] rounded-3xl overflow-hidden cursor-pointer bg-black/80 hover:bg-black/90 border-2 border-white/15 hover:border-white/40 shadow-[0_12px_36px_rgba(0,0,0,0.6)] hover:shadow-[0_0_45px_rgba(255,255,255,0.2)] transition-all text-left"
+              >
+                <div 
+                  className="absolute inset-0 flex items-center justify-center text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[11rem] opacity-95 font-black font-pixel drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]"
+                  style={{ color: slot.color }}
+                >
+                  {slot.icon}
+                </div>
+
+                {getRoleTag(slot.id) && (
+                  <div 
+                    className="absolute top-3 left-3 text-black text-[9px] sm:text-xs md:text-sm font-black px-2 py-1 rounded-lg uppercase font-pixel tracking-widest shadow-md"
+                    style={{ backgroundColor: slot.color }}
+                  >
+                    {getRoleTag(slot.id)}
+                  </div>
+                )}
+
+                <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 text-sm sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black italic text-white tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  {slot.name}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* ROW: 獨立活動藝人 | VTUBER企劃 */}
+        <div className="mb-12">
+          <div className="text-[10px] sm:text-xs text-white/40 font-pixel tracking-[0.25em] mb-5 uppercase flex items-center gap-3 px-2">
+            <span>獨立活動藝人 | VTUBER企劃</span>
+            <span className="h-[1px] bg-white/10 flex-1" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+            {INDEPENDENT_MEMBERS.map((slot) => (
+              <motion.div
+                key={slot.id}
+                onClick={() => onSpecialPage?.(slot.id)}
+                whileHover={{ y: -10, scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="relative aspect-[16/9] rounded-3xl overflow-hidden cursor-pointer bg-black/80 hover:bg-black/90 border-2 border-white/15 hover:border-[#A855F7]/50 shadow-[0_12px_36px_rgba(0,0,0,0.6)] hover:shadow-[0_0_45px_rgba(168,85,247,0.3)] transition-all text-left"
               >
                 <div 
                   className="absolute inset-0 flex items-center justify-center text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[11rem] opacity-95 font-black font-pixel drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]"
@@ -3686,7 +3730,7 @@ export default function App() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="text-white font-bold flex flex-col gap-4 text-center items-center"
                                   >
-                                    <div className="text-3xl md:text-4xl tracking-widest opacity-60">聯繫酸欠像素居酒屋</div>
+                                    <div className="text-3xl md:text-4xl tracking-widest opacity-60">官方收件地址(通訊管道)</div>
                                     <div className="text-2xl md:text-3xl text-[#D1B3FF] tracking-wider font-black">
                                       地址: 福和路120號之2
                                     </div>
